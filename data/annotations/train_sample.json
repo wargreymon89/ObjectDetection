@@ -1,0 +1,1 @@
+{"categories": [{"id": 99, "name": "sign"}], "annotations": [{"image_id": 155635793, "bbox": [505.24, 0.0, 47.86, 309.25], "category_id": 72}, {"image_id": 155641070, "bbox": [470.68, 0.0, 45.93, 191.86], "category_id": 72}], "images": [{"id": 155635793, "file_name": "PXL_20210425_155635793"}, {"id": 155641070, "file_name": "PXL_20210425_155641070"}]}
