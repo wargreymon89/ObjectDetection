@@ -19,10 +19,10 @@ class RetinaNet(nn.Module):
     "Implements RetinaNet from https://arxiv.org/abs/1708.02002"
 
     def __init__(self, encoder: nn.Module, n_classes, final_bias:float=0.,  n_conv:float=4,
-                 chs=256, n_anchors=9, flatten=True, sizes=None):
+                 chs=1024, n_anchors=9, flatten=True, sizes=None):
         super().__init__()
         self.n_classes, self.flatten = n_classes, flatten
-        imsize = (256, 256)
+        imsize = (1024, 1024)
         self.sizes = sizes
         sfs_szs, x, hooks = self._model_sizes(encoder, size=imsize)
         sfs_idxs = _get_sfs_idxs(sfs_szs)
@@ -36,7 +36,7 @@ class RetinaNet(nn.Module):
         self.classifier = self._head_subnet(n_classes, n_anchors, final_bias, chs=chs, n_conv=n_conv)
         self.box_regressor = self._head_subnet(4, n_anchors, 0., chs=chs, n_conv=n_conv)
 
-    def _head_subnet(self, n_classes, n_anchors, final_bias=0., n_conv=4, chs=256):
+    def _head_subnet(self, n_classes, n_anchors, final_bias=0., n_conv=4, chs=1024):
         layers = [self._conv2d_relu(chs, chs, bias=True) for _ in range(n_conv)]
         layers += [conv2d(chs, n_classes * n_anchors, bias=True)]
         layers[-1].bias.data.zero_().add_(final_bias)
@@ -51,7 +51,7 @@ class RetinaNet(nn.Module):
             return torch.cat(
                 [func(p).permute(0, 2, 3, 1).contiguous().view(p.size(0), -1, n_classes) for p in p_states], 1)
 
-    def _model_sizes(self, m: nn.Module, size:tuple=(256,256), full:bool=True) -> Tuple[Sizes,Tensor,Hooks]:
+    def _model_sizes(self, m: nn.Module, size:tuple=(1024,1024), full:bool=True) -> Tuple[Sizes,Tensor,Hooks]:
         "Passes a dummy input through the model to get the various sizes"
         hooks = hook_outputs(m)
         ch_in = in_channels(m)
